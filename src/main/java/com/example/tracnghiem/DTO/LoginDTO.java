@@ -7,7 +7,7 @@ public class LoginDTO {
     public LoginDTO() {
     }
 
-    public String getEmail() {
+    public String getEmail() {  
         return email;
     }
 

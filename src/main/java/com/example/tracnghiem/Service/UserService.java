@@ -39,7 +39,7 @@ public class UserService {
     }
     public UserDTO login(String email, String password) {
         User user= userRepository.findByEmail(email).orElseThrow(()->new RuntimeException("Không Đúng Tài Khoản Mật Khẩu"));
-        if (password.equals(user.getPassword())){
+        if (!password.equals(user.getPassword())){
             throw new RuntimeException("Không Đúng Tài Khoản Mật Khẩu!");
         }
         UserDTO userDTO = new UserDTO();
