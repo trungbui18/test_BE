@@ -13,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/quiz")
@@ -38,11 +41,30 @@ public class QuizController {
             throw new RuntimeException(e);
         }
     }
+    @GetMapping("/topic/{idTopic}")
+    public ResponseEntity<?> getAllQuizByTopicId(@PathVariable int idTopic) {
+        try {
+            List<QuizDTO> quizDTOS=quizService.getQuizListByIdTopic(idTopic);
+            return ResponseEntity.ok(quizDTOS);
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping("/{idQuiz}")
+    public ResponseEntity<?> getQuiz(@PathVariable int idQuiz) {
+        try {
+            QuizDTO quizDTO=quizService.getQuizById(idQuiz);
+            return ResponseEntity.ok(quizDTO);
+        }catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @GetMapping("find/{code}")
     public ResponseEntity<?> findQuiz(@PathVariable String code) {
         try {
-            QuizDTO quizDTO=quizService.getQuizByCode(code);
-            return ResponseEntity.ok(quizDTO);
+            int idQuiz=quizService.findQuizByCode(code);
+            return ResponseEntity.ok(idQuiz);
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

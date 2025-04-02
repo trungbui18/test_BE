@@ -21,6 +21,7 @@ public class QuizDTO {
     private Date created;
     private int time;
     private String code;
+    private int totalQuestions;
 
     public QuizDTO() {
     }
@@ -95,5 +96,13 @@ public class QuizDTO {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public int getTotalQuestions() {
+        return totalQuestions;
+    }
+
+    public void setTotalQuestions(int totalQuestions) {
+        this.totalQuestions = totalQuestions;
     }
 }

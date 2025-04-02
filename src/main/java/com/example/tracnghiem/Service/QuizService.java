@@ -66,21 +66,46 @@ public class QuizService {
         quizDTO.setUser(userDTO);
         return quizDTO;
     }
-
-    public QuizDTO getQuizByCode(String code) {
-        Quiz quiz=quizRepository.findByCode(code).orElseThrow(()->new RuntimeException("Không Tìm Thấy Bài Thi"));
+    public QuizDTO getQuizById(int id) {
+        Quiz quiz=quizRepository.findById(id).orElseThrow(()->new RuntimeException("Không Tìm Thấy Bài Thi"));
         QuizDTO quizDTO=new QuizDTO();
         quizDTO.setId(quiz.getId());
         quizDTO.setTitle(quiz.getTitle());
         quizDTO.setDescription(quiz.getDescription());
-        quizDTO.setCode(code);
+        quizDTO.setCode(quiz.getCode());
         quizDTO.setCreated(quiz.getCreated());
         quizDTO.setTime(quiz.getTime());
         quizDTO.setTopic(quiz.getTopic());
         quizDTO.setImage(quiz.getImage());
         UserDTO userDTO= new UserDTO(quiz.getUser().getId(),quiz.getUser().getUsername(),quiz.getUser().getEmail());
         quizDTO.setUser(userDTO);
+        int totalQuestion= quiz.getQuestions().size();
+        quizDTO.setTotalQuestions(totalQuestion);
         return quizDTO;
+    }
+    public int findQuizByCode(String code) {
+        Quiz quiz=quizRepository.findByCode(code).orElseThrow(()->new RuntimeException("Không Tìm Thấy Bài Thi"));
+        int idQuiz=quiz.getId();
+        return idQuiz;
+    }
+    public List<QuizDTO> getQuizListByIdTopic(int idTopic) {
+        List<QuizDTO> quizDTOList=new ArrayList<>();
+        List<Quiz> quizList=quizRepository.findAllByTopic_Id(idTopic);
+        for(Quiz quiz:quizList){
+            QuizDTO quizDTO=new QuizDTO();
+            quizDTO.setId(quiz.getId());
+            quizDTO.setTitle(quiz.getTitle());
+            quizDTO.setDescription(quiz.getDescription());
+            quizDTO.setCode(quiz.getCode());
+            quizDTO.setCreated(quiz.getCreated());
+            quizDTO.setTime(quiz.getTime());
+            quizDTO.setTopic(quiz.getTopic());
+            quizDTO.setImage(quiz.getImage());
+            quizDTO.setTotalQuestions(quiz.getQuestions().size());
+            quizDTO.setUser(new UserDTO(quiz.getUser().getId(),quiz.getUser().getUsername(),quiz.getUser().getEmail()));
+            quizDTOList.add(quizDTO);
+        }
+        return quizDTOList;
     }
     public void deteleQuiz(int idQuiz) {
         quizRepository.deleteById(idQuiz);
