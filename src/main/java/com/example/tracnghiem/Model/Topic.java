@@ -1,12 +1,15 @@
 package com.example.tracnghiem.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "topic")
+@Schema(description = "Topic entity")
+
 public class Topic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
