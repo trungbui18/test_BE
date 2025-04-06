@@ -1,5 +1,6 @@
 package com.example.tracnghiem.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class Question {
     private String img;
     @ManyToOne
     @JoinColumn(name = "id_quiz")
+    @JsonIgnore
     private Quiz quiz;
     @OneToMany(mappedBy = "question")
     private List<Answer> answers;

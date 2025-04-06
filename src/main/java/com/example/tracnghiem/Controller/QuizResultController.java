@@ -15,8 +15,8 @@ public class QuizResultController {
     public QuizResultController(QuizResultService quizResultService) {
         this.quizResultService = quizResultService;
     }
-    @GetMapping
-    public ResponseEntity<?> getQuizResult(@RequestParam int idUser) {
+    @GetMapping("/{idUser}")
+    public ResponseEntity<?> getQuizResult(@PathVariable int idUser) {
         try {
             List<QuizResultDTO> quizResultDTOS=quizResultService.getQuizResultsByIdUser(idUser);
             return ResponseEntity.ok(quizResultDTOS);

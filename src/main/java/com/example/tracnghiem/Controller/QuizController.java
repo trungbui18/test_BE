@@ -1,9 +1,6 @@
 package com.example.tracnghiem.Controller;
 
-import com.example.tracnghiem.DTO.QuizDTO;
-import com.example.tracnghiem.DTO.QuizRequest;
-import com.example.tracnghiem.DTO.SubmitRequest;
-import com.example.tracnghiem.DTO.SubmitRespone;
+import com.example.tracnghiem.DTO.*;
 import com.example.tracnghiem.Model.Quiz;
 import com.example.tracnghiem.Service.QuizService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,21 +24,22 @@ public class QuizController {
     }
     @PostMapping(value ="/create" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createQuiz(@RequestPart String quizRequest, @RequestPart MultipartFile image, @RequestParam int idUser ) {
-
+    public ResponseEntity<?> createQuiz(@RequestPart String title,
+                                        @RequestPart String description,
+                                        @RequestPart String topicName ,
+                                        @RequestPart int time,
+                                        @RequestPart MultipartFile image,
+                                        @RequestParam int idUser ) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            QuizRequest quiz = mapper.readValue(quizRequest,QuizRequest.class);
-            QuizDTO quizDTO=quizService.createQuiz(quiz,idUser,image);
+            QuizDTO quizDTO=quizService.createQuiz(title,description,topicName,time,idUser,image);
             return ResponseEntity.ok(quizDTO);
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
     @GetMapping("/topic/{idTopic}")
+
     public ResponseEntity<?> getAllQuizByTopicId(@PathVariable int idTopic) {
         try {
             List<QuizDTO> quizDTOS=quizService.getQuizListByIdTopic(idTopic);
@@ -70,8 +68,8 @@ public class QuizController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @DeleteMapping
-    public ResponseEntity<?> deleteQuiz(@RequestParam int idQuiz) {
+    @DeleteMapping("/idQuiz")
+    public ResponseEntity<?> deleteQuiz(@PathVariable int idQuiz) {
         try {
             quizService.deteleQuiz(idQuiz);
             return ResponseEntity.ok().body("Xóa Quiz Thành Công!");
@@ -99,10 +97,20 @@ public class QuizController {
         }
     }
     @PostMapping("submit")
-    public ResponseEntity<?> submitQuiz(@RequestBody SubmitRequest submitRequest, @RequestParam int idUser) {
+    public ResponseEntity<?> submitQuiz(@RequestBody SubmitRequest submitRequest) {
         try {
-            SubmitRespone submitRespone=quizService.submitQuiz(submitRequest, idUser);
+            SubmitRespone submitRespone=quizService.submitQuiz(submitRequest);
             return ResponseEntity.ok(submitRespone);
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping("create-quiz/{idQuiz}")
+    public ResponseEntity<?> getQuizWithQuestions(@PathVariable int idQuiz) {
+        try {
+            QuizQuestionDTO quizQuestionDTO=quizService.getQuizQuestion(idQuiz);
+            return ResponseEntity.ok(quizQuestionDTO);
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

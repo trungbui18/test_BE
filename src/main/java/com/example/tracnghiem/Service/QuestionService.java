@@ -86,44 +86,48 @@ public class QuestionService {
         questionCreateDTO.setAnswers(answers);
         return questionCreateDTO;
     }
-    public QuestionCreateDTO updateQuestion(QuestionCreateDTO questionCreateDTO,int idQuestion, MultipartFile image) {
-        if (questionCreateDTO.getId()!=idQuestion) {
-            throw new RuntimeException("Không Trùng idQuestion");
+    @Transactional
+    public QuestionCreateDTO updateQuestion(QuestionCreateDTO questionCreateDTO, int idQuestion, MultipartFile image) {
+        // 1. Validate ID
+        if (questionCreateDTO.getId() != idQuestion) {
+            throw new RuntimeException("ID câu hỏi không khớp");
         }
-        Question question = questionRepository.findById(idQuestion).orElseThrow(()->new RuntimeException("Không Tìm Thấy Question!"));
+
+        // 2. Cập nhật câu hỏi chính
+        Question question = questionRepository.findById(idQuestion)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy câu hỏi"));
         question.setQuestion(questionCreateDTO.getQuestion());
+
         if (image != null && !image.isEmpty()) {
-            String imagePath = imageService.uploadImage(image);
-            question.setImg(imagePath);
+            question.setImg(imageService.uploadImage(image));
         }
-        questionRepository.save(question);
-        List<Answer> answers = answerRepository.findByQuestionId(question.getId());
-        Map<Integer,Answer> answerMap = new HashMap<>();
-        answerMap=answers.stream().collect(Collectors.toMap(Answer::getId, answer -> answer));
-        List<Answer> answerList=questionCreateDTO.getAnswers();
+        Question savedQuestion = questionRepository.save(question);
+
+        // 3. Cập nhật từng câu trả lời
+        List<Answer> updatedAnswers = questionCreateDTO.getAnswers();
         List<Answer> finalAnswers = new ArrayList<>();
-        for (Answer updatedAnswer : answerList) {
-            if (updatedAnswer.getId() >0 && answerMap.containsKey(updatedAnswer.getId())) {
-                // Nếu ID có trong database, chỉ cập nhật nội dung và đúng/sai
-                Answer existingAnswer = answerMap.get(updatedAnswer.getId());
-                existingAnswer.setContent(updatedAnswer.getContent());
-                existingAnswer.setCorrect(updatedAnswer.isCorrect());
-                finalAnswers.add(existingAnswer);
-            } else {
-                // Nếu là câu trả lời mới, thêm mới
-                Answer newAnswer = new Answer();
-                newAnswer.setContent(updatedAnswer.getContent());
-                newAnswer.setCorrect(updatedAnswer.isCorrect());
-                newAnswer.setQuestion(question);
-                finalAnswers.add(newAnswer);
-            }
+
+        for (Answer updatedAnswer : updatedAnswers) {
+            Answer existingAnswer = answerRepository.findById(updatedAnswer.getId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Answer ID: " + updatedAnswer.getId()));
+
+            // Chỉ cập nhật các trường được phép thay đổi
+            existingAnswer.setContent(updatedAnswer.getContent()); // Thêm dòng này nếu muốn cập nhật content
+            existingAnswer.setCorrect(updatedAnswer.isCorrect());
+            existingAnswer.setQuestion(savedQuestion); // Liên kết với câu hỏi đã lưu
+
+            finalAnswers.add(existingAnswer);
         }
-        answerRepository.saveAll(finalAnswers);
-        QuestionCreateDTO questionCreate = new QuestionCreateDTO();
-        questionCreateDTO.setId(question.getId());
-        questionCreateDTO.setQuestion(question.getQuestion());
-        questionCreateDTO.setImg(question.getImg());
-        questionCreateDTO.setAnswers(finalAnswers);
-        return questionCreate;
+
+        // 4. Lưu đồng loạt
+        List<Answer> savedAnswers = answerRepository.saveAll(finalAnswers);
+
+        // 5. Cập nhật kết quả trả về
+        questionCreateDTO.setId(savedQuestion.getId());
+        questionCreateDTO.setQuestion(savedQuestion.getQuestion());
+        questionCreateDTO.setImg(savedQuestion.getImg());
+        questionCreateDTO.setAnswers(savedAnswers);
+
+        return questionCreateDTO;
     }
 }

@@ -43,17 +43,15 @@ public class QuestionController {
     }
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addQuestion(@RequestParam String questionRequest, @RequestParam(required = false) MultipartFile imgage) {
+    public ResponseEntity<?> addQuestion(
+            @ModelAttribute QuestionRequest questionRequest,
+            @RequestPart(required = false) MultipartFile image) {
+
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            QuestionRequest request=mapper.readValue(questionRequest,QuestionRequest.class);
-            QuestionCreateDTO questionCreateDTO= questionService.createQuestion(request,imgage);
+            QuestionCreateDTO questionCreateDTO = questionService.createQuestion(questionRequest, image);
             return ResponseEntity.ok(questionCreateDTO);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
     @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},

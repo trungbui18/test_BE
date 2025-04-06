@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,12 +31,12 @@ public class QuizService {
         this.answerRepository = answerRepository;
         this.quizResultRepository = quizResultRepository;
     }
-    public QuizDTO createQuiz(QuizRequest quizRequest, int idUser, MultipartFile image) {
+    public QuizDTO createQuiz(String title, String description, String topicName,int time, int idUser, MultipartFile image) {
         User user=userRepository.findById(idUser).orElseThrow(()-> new RuntimeException("Không Tìm Thấy User"));
-        Topic topic= topicRepository.findByName(quizRequest.getTopicName()).orElseThrow(()->new RuntimeException("Không Tìm Thấy Topic"));
+        Topic topic= topicRepository.findByName(topicName).orElseThrow(()->new RuntimeException("Không Tìm Thấy Topic"));
         Quiz quiz = new Quiz();
-        quiz.setTitle(quizRequest.getTitle());
-        quiz.setDescription(quizRequest.getDescription());
+        quiz.setTitle(title);
+        quiz.setDescription(description);
         if (image != null && !image.isEmpty()) {
             String imagePath = imageService.uploadImage(image);
             quiz.setImage(imagePath);
@@ -51,12 +50,12 @@ public class QuizService {
         } while (quizRepository.existsByCode(code));
         quiz.setCode(code);
         quiz.setCreated(new Date());
-        quiz.setTime(quizRequest.getTime());
+        quiz.setTime(time);
         quizRepository.save(quiz);
         QuizDTO quizDTO = new QuizDTO();
         quizDTO.setId(quiz.getId());
-        quizDTO.setTitle(quizRequest.getTitle());
-        quizDTO.setDescription(quizRequest.getDescription());
+        quizDTO.setTitle(quiz.getTitle());
+        quizDTO.setDescription(quiz.getDescription());
         quizDTO.setCode(code);
         quizDTO.setCreated(quiz.getCreated());
         quizDTO.setTime(quiz.getTime());
@@ -107,6 +106,21 @@ public class QuizService {
         }
         return quizDTOList;
     }
+    public QuizQuestionDTO getQuizQuestion(int idQuiz){
+        Quiz quiz=quizRepository.findById(idQuiz).orElseThrow(()->new RuntimeException("Không Tìm Thấy Quiz"));
+        QuizQuestionDTO quizQuestionDTO=new QuizQuestionDTO();
+        quizQuestionDTO.setId(quiz.getId());
+        quizQuestionDTO.setTitle(quiz.getTitle());
+        quizQuestionDTO.setUser(new UserDTO(quiz.getUser().getId(),quiz.getUser().getUsername(),quiz.getUser().getEmail()));
+        quizQuestionDTO.setDescription(quiz.getDescription());
+        quizQuestionDTO.setCode(quiz.getCode());
+        quizQuestionDTO.setCreated(quiz.getCreated());
+        quizQuestionDTO.setTime(quiz.getTime());
+        quizQuestionDTO.setTopic(quiz.getTopic());
+        quizQuestionDTO.setImage(quiz.getImage());
+        quizQuestionDTO.setQuestion(quiz.getQuestions());
+        return quizQuestionDTO;
+    }
     public void deteleQuiz(int idQuiz) {
         quizRepository.deleteById(idQuiz);
     }
@@ -139,47 +153,34 @@ public class QuizService {
         return quizDTO;
     }
     @Transactional
-    public SubmitRespone submitQuiz(SubmitRequest submitRequest, int idUser) {
+    public SubmitRespone submitQuiz(SubmitRequest submitRequest) {
         Quiz quiz= quizRepository.findById(submitRequest.getIdQuiz()).orElseThrow(()->new RuntimeException("Không Tìm Thấy Quiz"));
-        User user=userRepository.findById(idUser).orElseThrow(()->new RuntimeException("Không Tìm Thấy User!"));
-        List<Integer> questionIds= new ArrayList<>(submitRequest.getAnswers().keySet());
-        List<Question> questions=questionRepository.findAllById(questionIds);
-        List<Answer> correctAnswers=answerRepository.findByQuestionIdInAndCorrect(questionIds,true);
-        List<Answer> selectedAnswers=answerRepository.findAllById(submitRequest.getAnswers().values());
-        Map<Integer,Question> questionMap=questions.stream().collect(Collectors.toMap(Question::getId, q -> q));
-        Map<Integer, Answer> correctAnswerMap=correctAnswers.stream().collect(Collectors.toMap(a-> a.getQuestion().getId(), a -> a));
-        Map<Integer, Answer> selectedAnswerMap=selectedAnswers.stream().collect(Collectors.toMap(Answer::getId, a -> a));
+        User user=userRepository.findById(submitRequest.getIdUser()).orElseThrow(()->new RuntimeException("Không Tìm Thấy User!"));
+        List <AnswerSelected> answerSelectedList=submitRequest.getAnswers();
         int score=0;
         int totalQuestion=quiz.getQuestions().size();
         List<UserResult> userResults = new ArrayList<>();
-        for (Map.Entry<Integer,Integer> entry: submitRequest.getAnswers().entrySet()) {
-            int questionId=entry.getKey();
-            int selectedAnswerId=entry.getValue();
-            Question question=questionMap.get(questionId);
-            if (question==null) {
-                throw new RuntimeException("Không Tìm Thấy QuestionID "+questionId);
-            }
-            Answer selectedAnswer=selectedAnswerMap.get(selectedAnswerId);
-            if (selectedAnswer==null) {
-                throw new RuntimeException("Không Tìm Thầy AnswerID "+selectedAnswerId);
-            }
+        for (AnswerSelected answerSelected:answerSelectedList){
+            Question question= questionRepository.findById(answerSelected.getIdQuestion()).orElseThrow(()-> new RuntimeException("Không Tìm Thấy ID Question"+answerSelected.getIdQuestion()));
+            boolean correctAnswer = false;
+            Answer selectedAnswer=null;
+            if (answerSelected.getIdAnswerSelected()!=null) {
+                selectedAnswer = answerRepository.findById(answerSelected.getIdAnswerSelected()).orElseThrow(() -> new RuntimeException("Không Tìm Thấy Answer của Question" + answerSelected.getIdQuestion()));
 
-            boolean isCorrect=false;
-            if (selectedAnswer.getQuestion().getId()==questionId) {
-                Answer correctAnswer=correctAnswerMap.get(questionId);
-                if (correctAnswer != null && correctAnswer.getId() == selectedAnswerId) {
-                    isCorrect = true;
-                    score++;
+                if (selectedAnswer.getQuestion().getId() != question.getId()) {
+                    throw new RuntimeException("Câu Trả Lời Không Thuộc Về Câu Hỏi");
+                } else {
+                    if (selectedAnswer.isCorrect()) {
+                        correctAnswer = true;
+                        score++;
+                    }
                 }
             }
-            else {
-                throw new RuntimeException("Câu Trả Lời Không Thuộc Câu Hỏi Này!");
-            }
-            UserResult userResult= new UserResult();
+            UserResult userResult = new UserResult();
             userResult.setUser(user);
             userResult.setQuestion(question);
             userResult.setQuiz(quiz);
-            userResult.setIs_correct(isCorrect);
+            userResult.setIs_correct(correctAnswer);
             userResult.setSelectedAnswer(selectedAnswer);
             userResults.add(userResult);
         }
