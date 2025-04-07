@@ -191,7 +191,9 @@ public class QuizService {
         quizResult.setTotalQuestions(totalQuestion);
         quizResult.setSubmitted_at(new Date());
         quizResultRepository.save(quizResult);
-        userResults.forEach(userResult -> userResult.setQuizResult(quizResult));
+        for (UserResult userResult : userResults) {
+            userResult.setQuizResult(quizResult);
+        }
         userResultRepository.saveAll(userResults);
         SubmitRespone submitRespone=new SubmitRespone();
         submitRespone.setScore(score);

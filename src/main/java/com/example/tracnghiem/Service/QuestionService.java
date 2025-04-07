@@ -12,10 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -53,7 +50,7 @@ public class QuestionService {
         questionRepository.deleteById(idQuestion);
     }
     @Transactional
-    public QuestionCreateDTO createQuestion(QuestionRequest questionRequest, MultipartFile image) {
+    public QuestionUpsertDTO createQuestion(QuestionRequest questionRequest, MultipartFile image) {
         Question question = new Question();
         question.setQuestion(questionRequest.getQuestion());
         if (image != null && !image.isEmpty()) {
@@ -79,55 +76,51 @@ public class QuestionService {
             throw new RuntimeException("Không thể có hơn 1 câu đúng!");
         }
         answerRepository.saveAll(answers);
-        QuestionCreateDTO questionCreateDTO = new QuestionCreateDTO();
-        questionCreateDTO.setId(question.getId());
-        questionCreateDTO.setQuestion(question.getQuestion());
-        questionCreateDTO.setImg(question.getImg());
-        questionCreateDTO.setAnswers(answers);
-        return questionCreateDTO;
+        QuestionUpsertDTO questionUpsertDTO = new QuestionUpsertDTO();
+        questionUpsertDTO.setId(question.getId());
+        questionUpsertDTO.setQuestion(question.getQuestion());
+        questionUpsertDTO.setImg(question.getImg());
+        questionUpsertDTO.setAnswers(answers);
+        return questionUpsertDTO;
     }
     @Transactional
-    public QuestionCreateDTO updateQuestion(QuestionCreateDTO questionCreateDTO, int idQuestion, MultipartFile image) {
+    public QuestionUpsertDTO updateQuestion(QuestionUpsertDTO questionUpsertDTO, int idQuestion, MultipartFile image) {
         // 1. Validate ID
-        if (questionCreateDTO.getId() != idQuestion) {
+        if (questionUpsertDTO.getId() != idQuestion) {
             throw new RuntimeException("ID câu hỏi không khớp");
         }
 
-        // 2. Cập nhật câu hỏi chính
         Question question = questionRepository.findById(idQuestion)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy câu hỏi"));
-        question.setQuestion(questionCreateDTO.getQuestion());
+        question.setQuestion(questionUpsertDTO.getQuestion());
 
         if (image != null && !image.isEmpty()) {
             question.setImg(imageService.uploadImage(image));
         }
         Question savedQuestion = questionRepository.save(question);
 
-        // 3. Cập nhật từng câu trả lời
-        List<Answer> updatedAnswers = questionCreateDTO.getAnswers();
+
+        List<Answer> updatedAnswers = questionUpsertDTO.getAnswers();
         List<Answer> finalAnswers = new ArrayList<>();
 
         for (Answer updatedAnswer : updatedAnswers) {
             Answer existingAnswer = answerRepository.findById(updatedAnswer.getId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy Answer ID: " + updatedAnswer.getId()));
 
-            // Chỉ cập nhật các trường được phép thay đổi
-            existingAnswer.setContent(updatedAnswer.getContent()); // Thêm dòng này nếu muốn cập nhật content
+            existingAnswer.setContent(updatedAnswer.getContent());
             existingAnswer.setCorrect(updatedAnswer.isCorrect());
-            existingAnswer.setQuestion(savedQuestion); // Liên kết với câu hỏi đã lưu
+            existingAnswer.setQuestion(savedQuestion);
 
             finalAnswers.add(existingAnswer);
         }
 
-        // 4. Lưu đồng loạt
         List<Answer> savedAnswers = answerRepository.saveAll(finalAnswers);
 
-        // 5. Cập nhật kết quả trả về
-        questionCreateDTO.setId(savedQuestion.getId());
-        questionCreateDTO.setQuestion(savedQuestion.getQuestion());
-        questionCreateDTO.setImg(savedQuestion.getImg());
-        questionCreateDTO.setAnswers(savedAnswers);
+        questionUpsertDTO.setId(savedQuestion.getId());
+        questionUpsertDTO.setQuestion(savedQuestion.getQuestion());
+        questionUpsertDTO.setImg(savedQuestion.getImg());
+        questionUpsertDTO.setAnswers(savedAnswers);
 
-        return questionCreateDTO;
+        return questionUpsertDTO;
     }
 }

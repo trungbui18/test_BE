@@ -15,10 +15,20 @@ public class QuizResultController {
     public QuizResultController(QuizResultService quizResultService) {
         this.quizResultService = quizResultService;
     }
-    @GetMapping("/{idUser}")
-    public ResponseEntity<?> getQuizResult(@PathVariable int idUser) {
+    @GetMapping("/user/{idUser}")
+    public ResponseEntity<?> getQuizResultForUser(@PathVariable int idUser) {
         try {
             List<QuizResultDTO> quizResultDTOS=quizResultService.getQuizResultsByIdUser(idUser);
+            return ResponseEntity.ok(quizResultDTOS);
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping("/quiz/{idQuiz}")
+    public ResponseEntity<?> getQuizResultForQuiz(@PathVariable int idQuiz) {
+        try {
+            List<QuizResultDTO> quizResultDTOS=quizResultService.getQuizResultsByIdQuiz(idQuiz);
             return ResponseEntity.ok(quizResultDTOS);
         }
         catch (RuntimeException e) {

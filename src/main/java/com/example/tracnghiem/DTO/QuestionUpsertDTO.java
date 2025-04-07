@@ -4,7 +4,7 @@ import com.example.tracnghiem.Model.Answer;
 
 import java.util.List;
 
-public class QuestionCreateDTO {
+public class QuestionUpsertDTO {
     private int id;
     private String question;
     private String img;

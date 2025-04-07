@@ -1,12 +1,9 @@
 package com.example.tracnghiem.Controller;
 
-import com.example.tracnghiem.DTO.QuestionCreateDTO;
+import com.example.tracnghiem.DTO.QuestionUpsertDTO;
 import com.example.tracnghiem.DTO.QuestionDTO;
 import com.example.tracnghiem.DTO.QuestionRequest;
 import com.example.tracnghiem.Service.QuestionService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,25 +45,21 @@ public class QuestionController {
             @RequestPart(required = false) MultipartFile image) {
 
         try {
-            QuestionCreateDTO questionCreateDTO = questionService.createQuestion(questionRequest, image);
-            return ResponseEntity.ok(questionCreateDTO);
+            QuestionUpsertDTO questionUpsertDTO = questionService.createQuestion(questionRequest, image);
+            return ResponseEntity.ok(questionUpsertDTO);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
     @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateQuestion(@RequestParam String questionCreateDTO,@RequestParam int idQuestion, @RequestParam(required = false) MultipartFile imgage) {
+    public ResponseEntity<?> updateQuestion(@ModelAttribute QuestionUpsertDTO questionUpsertDTO, @RequestParam int idQuestion, @RequestParam(required = false) MultipartFile imgage) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            QuestionCreateDTO request=mapper.readValue(questionCreateDTO,QuestionCreateDTO.class);
-            QuestionCreateDTO response = questionService.updateQuestion(request, idQuestion, imgage);
+            QuestionUpsertDTO response = questionService.updateQuestion(questionUpsertDTO, idQuestion, imgage);
             return ResponseEntity.ok(response);
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
 }
