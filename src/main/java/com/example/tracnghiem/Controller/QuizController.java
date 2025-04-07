@@ -116,4 +116,14 @@ public class QuizController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping("user")
+    public ResponseEntity<?> getQuizByUser(@RequestParam int idUser) {
+        try {
+            List<QuizDTO> quizDTOList=quizService.getQuizListUser(idUser);
+            return ResponseEntity.ok(quizDTOList);
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

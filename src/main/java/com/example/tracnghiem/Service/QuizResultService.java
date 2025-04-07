@@ -16,136 +16,108 @@ public class QuizResultService {
     public QuizResultService(QuizResultRepository quizResultRepository) {
         this.quizResultRepository = quizResultRepository;
     }
-    public List<QuizResultDTO> getQuizResultsByIdUser(int idUser) {
-        List<QuizResult> quizResults = quizResultRepository.findAllByUserId(idUser);
-        List<QuizResultDTO> quizResultDTOs = new ArrayList<>();
-
-        for (QuizResult quizResult : quizResults) {
-            QuizResultDTO quizResultDTO = new QuizResultDTO();
-            quizResultDTO.setId(quizResult.getId());
-
-            if (quizResult.getUser() != null) {
-                UserDTO userDTO = new UserDTO();
-                userDTO.setId(quizResult.getUser().getId());
-                userDTO.setUsername(quizResult.getUser().getUsername());
-                userDTO.setEmail(quizResult.getUser().getEmail());
-                quizResultDTO.setUser(userDTO);
-            }
-
-            if (quizResult.getQuiz() != null) {
-                quizResultDTO.setIdQuiz(quizResult.getQuiz().getId());
-                quizResultDTO.setQuizTitle(quizResult.getQuiz().getTitle());
-            }
-
-            quizResultDTO.setScore(quizResult.getScore());
-            quizResultDTO.setTotalQuestions(quizResult.getTotalQuestions());
-            quizResultDTO.setSubmitted_at(quizResult.getSubmitted_at());
-
-            if (quizResult.getUserResults() != null) {
-                List<UserResultDTO> userResultDTOs = new ArrayList<>();
-                for (UserResult userResult : quizResult.getUserResults()) {
-                    UserResultDTO userResultDTO = new UserResultDTO();
-                    userResultDTO.setId(userResult.getId());
-
-                    if (userResult.getQuestion() != null) {
-                        QuestionDTO questionDTO = new QuestionDTO();
-                        questionDTO.setId(userResult.getQuestion().getId());
-                        questionDTO.setQuestion(userResult.getQuestion().getQuestion());
-                        questionDTO.setImg(userResult.getQuestion().getImg());
-
-                        List<AnswerDTO> answerDTOs = new ArrayList<>();
-                        List<Answer> answers = userResult.getQuestion().getAnswers();
-                        for (Answer answer : answers) {
-                            AnswerDTO answerDTO = new AnswerDTO();
-                            answerDTO.setId(answer.getId());
-                            answerDTO.setContent(answer.getContent());
-                            answerDTOs.add(answerDTO);
-                        }
-                        questionDTO.setAnswers(answerDTOs);
-
-                        userResultDTO.setQuestion(questionDTO);
-                    }
-
-
-                    if (userResult.getSelectedAnswer() != null) {
-                        userResultDTO.setSelectedAnswerId(userResult.getSelectedAnswer().getId());
-                        userResultDTO.setSelectedAnswerText(userResult.getSelectedAnswer().getContent());
-                    }
-
-                    userResultDTO.setCorrect(userResult.isIs_correct());
-                    userResultDTOs.add(userResultDTO);
-                }
-                quizResultDTO.setUserResultDTOList(userResultDTOs);
-            }
-
-            quizResultDTOs.add(quizResultDTO);
-        }
-        return quizResultDTOs;
-    }
-    public List<QuizResultDTO> getQuizResultsByIdQuiz(int idQuiz) {
+    public List<UserQuizResultDTO> getQuizResultsByIdQuiz(int idQuiz) {
         List<QuizResult> quizResults = quizResultRepository.findAllByQuizId(idQuiz);
-        List<QuizResultDTO> quizResultDTOs = new ArrayList<>();
-
-        for (QuizResult quizResult : quizResults) {
-            QuizResultDTO quizResultDTO = new QuizResultDTO();
-            quizResultDTO.setId(quizResult.getId());
-
-            if (quizResult.getUser() != null) {
-                UserDTO userDTO = new UserDTO();
-                userDTO.setId(quizResult.getUser().getId());
-                userDTO.setUsername(quizResult.getUser().getUsername());
-                userDTO.setEmail(quizResult.getUser().getEmail());
-                quizResultDTO.setUser(userDTO);
-            }
-
-            if (quizResult.getQuiz() != null) {
-                quizResultDTO.setIdQuiz(quizResult.getQuiz().getId());
-                quizResultDTO.setQuizTitle(quizResult.getQuiz().getTitle());
-            }
-
-            quizResultDTO.setScore(quizResult.getScore());
-            quizResultDTO.setTotalQuestions(quizResult.getTotalQuestions());
-            quizResultDTO.setSubmitted_at(quizResult.getSubmitted_at());
-
-            if (quizResult.getUserResults() != null) {
-                List<UserResultDTO> userResultDTOs = new ArrayList<>();
-                for (UserResult userResult : quizResult.getUserResults()) {
-                    UserResultDTO userResultDTO = new UserResultDTO();
-                    userResultDTO.setId(userResult.getId());
-
-                    if (userResult.getQuestion() != null) {
-                        QuestionDTO questionDTO = new QuestionDTO();
-                        questionDTO.setId(userResult.getQuestion().getId());
-                        questionDTO.setQuestion(userResult.getQuestion().getQuestion());
-                        questionDTO.setImg(userResult.getQuestion().getImg());
-
-                        List<AnswerDTO> answerDTOs = new ArrayList<>();
-                        List<Answer> answers = userResult.getQuestion().getAnswers();
-                        for (Answer answer : answers) {
-                            AnswerDTO answerDTO = new AnswerDTO();
-                            answerDTO.setId(answer.getId());
-                            answerDTO.setContent(answer.getContent());
-                            answerDTOs.add(answerDTO);
-                        }
-                        questionDTO.setAnswers(answerDTOs);
-
-                        userResultDTO.setQuestion(questionDTO);
-                    }
-
-
-                    if (userResult.getSelectedAnswer() != null) {
-                        userResultDTO.setSelectedAnswerId(userResult.getSelectedAnswer().getId());
-                        userResultDTO.setSelectedAnswerText(userResult.getSelectedAnswer().getContent());
-                    }
-
-                    userResultDTO.setCorrect(userResult.isIs_correct());
-                    userResultDTOs.add(userResultDTO);
-                }
-                quizResultDTO.setUserResultDTOList(userResultDTOs);
-            }
-
-            quizResultDTOs.add(quizResultDTO);
+        List<UserQuizResultDTO> userQuizResultDTOs=new ArrayList<>();
+        for(QuizResult quizResult:quizResults){
+            UserQuizResultDTO userQuizResultDTO=new UserQuizResultDTO();
+            userQuizResultDTO.setIdQuizResult(quizResult.getId());
+            userQuizResultDTO.setSubmittedAt(quizResult.getSubmitted_at());
+            userQuizResultDTO.setScore(quizResult.getScore());
+            UserDTO userDTO=new UserDTO();
+            userDTO.setId(quizResult.getUser().getId());
+            userDTO.setUsername(quizResult.getUser().getUsername());
+            userDTO.setEmail(quizResult.getUser().getEmail());
+            userQuizResultDTO.setUserDTO(userDTO);
+            userQuizResultDTOs.add(userQuizResultDTO);
         }
-        return quizResultDTOs;
+        return userQuizResultDTOs;
     }
+    public List<QuizResultSimpleDTO> getQuizResultsByIdUser(int idUser){
+        List<QuizResult> quizResults=quizResultRepository.findAllByUserId(idUser);
+        List<QuizResultSimpleDTO> quizResultSimpleDTOs = new ArrayList<>();
+        for (QuizResult quizResult : quizResults) {
+            QuizResultSimpleDTO quizResultSimpleDTO = new QuizResultSimpleDTO();
+            quizResultSimpleDTO.setId(quizResult.getId());
+            quizResultSimpleDTO.setSubmittedAt(quizResult.getSubmitted_at());
+            quizResultSimpleDTO.setScore(quizResult.getScore());
+            if (quizResult.getQuiz()!=null){
+                QuizDTO quizDTO = new QuizDTO();
+                quizDTO.setId(quizResult.getQuiz().getId());
+                quizDTO.setTitle(quizResult.getQuiz().getTitle());
+                quizDTO.setDescription(quizResult.getQuiz().getDescription());
+                quizDTO.setImage(quizResult.getQuiz().getImage());
+                quizDTO.setTopic(quizResult.getQuiz().getTopic());
+                quizDTO.setCreated(quizResult.getQuiz().getCreated());
+                quizDTO.setTime(quizResult.getQuiz().getTime());
+                quizDTO.setCode(quizResult.getQuiz().getCode());
+                quizDTO.setTotalQuestions(quizResult.getTotalQuestions());
+                quizResultSimpleDTO.setQuiz(quizDTO);
+            }
+            quizResultSimpleDTOs.add(quizResultSimpleDTO);
+        }
+        return quizResultSimpleDTOs;
+    }
+    public QuizResultDTO getQuizResultDetail(int resultId) {
+        QuizResult quizResult = quizResultRepository.findById(resultId).orElseThrow(()->new RuntimeException("Không Tìm Thấy Kết Quả Quiz"));
+        QuizResultDTO quizResultDTO = new QuizResultDTO();
+        quizResultDTO.setId(quizResult.getId());
+
+        if (quizResult.getUser() != null) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(quizResult.getUser().getId());
+            userDTO.setUsername(quizResult.getUser().getUsername());
+            userDTO.setEmail(quizResult.getUser().getEmail());
+            quizResultDTO.setUser(userDTO);
+        }
+
+        if (quizResult.getQuiz() != null) {
+            quizResultDTO.setIdQuiz(quizResult.getQuiz().getId());
+            quizResultDTO.setQuizTitle(quizResult.getQuiz().getTitle());
+        }
+
+        quizResultDTO.setScore(quizResult.getScore());
+        quizResultDTO.setTotalQuestions(quizResult.getTotalQuestions());
+        quizResultDTO.setSubmitted_at(quizResult.getSubmitted_at());
+
+
+        if (quizResult.getUserResults() != null) {
+            List<UserResultDTO> userResultDTOs = new ArrayList<>();
+            for (UserResult userResult : quizResult.getUserResults()) {
+                UserResultDTO userResultDTO = new UserResultDTO();
+                userResultDTO.setId(userResult.getId());
+
+
+                if (userResult.getQuestion() != null) {
+                    QuestionDTO questionDTO = new QuestionDTO();
+                    questionDTO.setId(userResult.getQuestion().getId());
+                    questionDTO.setQuestion(userResult.getQuestion().getQuestion());
+                    questionDTO.setImg(userResult.getQuestion().getImg());
+
+
+                    List<AnswerDTO> answerDTOs = new ArrayList<>();
+                    for (Answer answer : userResult.getQuestion().getAnswers()) {
+                        AnswerDTO answerDTO = new AnswerDTO();
+                        answerDTO.setId(answer.getId());
+                        answerDTO.setContent(answer.getContent());
+                        answerDTOs.add(answerDTO);
+                    }
+                    questionDTO.setAnswers(answerDTOs);
+                    userResultDTO.setQuestion(questionDTO);
+                }
+
+                if (userResult.getSelectedAnswer() != null) {
+                    userResultDTO.setSelectedAnswerId(userResult.getSelectedAnswer().getId());
+                    userResultDTO.setSelectedAnswerText(userResult.getSelectedAnswer().getContent());
+                }
+
+                userResultDTO.setCorrect(userResult.isIs_correct());
+                userResultDTOs.add(userResultDTO);
+            }
+            quizResultDTO.setUserResultDTOList(userResultDTOs);
+        }
+
+        return quizResultDTO;
+    }
+
 }

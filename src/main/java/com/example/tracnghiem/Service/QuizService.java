@@ -152,6 +152,25 @@ public class QuizService {
         quizDTO.setUser(userDTO);
         return quizDTO;
     }
+    public List<QuizDTO> getQuizListUser(int idUser) {
+        List<Quiz> quizList=quizRepository.findAllByUser_Id(idUser);
+        List<QuizDTO> quizDTOList=new ArrayList<>();
+        for(Quiz quiz:quizList){
+            QuizDTO quizDTO=new QuizDTO();
+            quizDTO.setId(quiz.getId());
+            quizDTO.setTitle(quiz.getTitle());
+            quizDTO.setDescription(quiz.getDescription());
+            quizDTO.setCode(quiz.getCode());
+            quizDTO.setCreated(quiz.getCreated());
+            quizDTO.setTime(quiz.getTime());
+            quizDTO.setTopic(quiz.getTopic());
+            quizDTO.setImage(quiz.getImage());
+            quizDTO.setTotalQuestions(quiz.getQuestions().size());
+            quizDTO.setUser(new UserDTO(quiz.getUser().getId(),quiz.getUser().getUsername(),quiz.getUser().getEmail()));
+            quizDTOList.add(quizDTO);
+        }
+        return quizDTOList;
+    }
     @Transactional
     public SubmitRespone submitQuiz(SubmitRequest submitRequest) {
         Quiz quiz= quizRepository.findById(submitRequest.getIdQuiz()).orElseThrow(()->new RuntimeException("Không Tìm Thấy Quiz"));
@@ -200,4 +219,5 @@ public class QuizService {
         submitRespone.setTotalQuestions(totalQuestion);
         return submitRespone;
     }
+
 }

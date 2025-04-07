@@ -13,6 +13,6 @@ public interface QuizRepository extends JpaRepository<Quiz,Integer> {
     Optional<Quiz> findById(int id);
     Optional<Quiz> findByCode(String code);
     List<Quiz> findAllByTopic_Id(int topicId);
-
+    List<Quiz> findAllByUser_Id(int userId);
     int id(int id);
 }
