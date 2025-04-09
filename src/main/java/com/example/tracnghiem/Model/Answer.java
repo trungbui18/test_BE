@@ -18,7 +18,7 @@ public class Answer {
     @JsonIgnore
     private Question question;
 
-    @OneToMany(mappedBy = "selectedAnswer")
+    @OneToMany(mappedBy = "selectedAnswer", cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     private List<UserResult> userResults;
     public Answer() {

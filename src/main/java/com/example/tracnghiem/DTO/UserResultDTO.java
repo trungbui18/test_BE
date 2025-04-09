@@ -18,8 +18,6 @@ public class UserResultDTO {
         this.id = id;
     }
 
-
-
     public int getSelectedAnswerId() {
         return selectedAnswerId;
     }
