@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/question")
 public class QuestionController {
@@ -45,8 +44,8 @@ public class QuestionController {
             @RequestPart(required = false) MultipartFile image) {
 
         try {
-            QuestionUpsertDTO questionUpsertDTO = questionService.createQuestion(questionRequest, image);
-            return ResponseEntity.ok(questionUpsertDTO);
+            questionService.createQuestion(questionRequest, image);
+            return ResponseEntity.ok("Thêm Câu Hỏi Thành Công!");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -55,8 +54,8 @@ public class QuestionController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateQuestion(@ModelAttribute QuestionUpsertDTO questionUpsertDTO, @RequestParam int idQuestion, @RequestParam(required = false) MultipartFile imgage) {
         try {
-            QuestionUpsertDTO response = questionService.updateQuestion(questionUpsertDTO, idQuestion, imgage);
-            return ResponseEntity.ok(response);
+            questionService.updateQuestion(questionUpsertDTO, idQuestion, imgage);
+            return ResponseEntity.ok("Sửa Câu Hỏi Thành Công!");
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -4,11 +4,10 @@ import java.util.Date;
 
 public class UserQuizResultDTO {
     private int idQuizResult;
-    private UserDTO userDTO;
+    private UserDTO user;
     private int score;
     private Date submittedAt;
     public UserQuizResultDTO() {}
-
     public int getIdQuizResult() {
         return idQuizResult;
     }
@@ -18,11 +17,11 @@ public class UserQuizResultDTO {
     }
 
     public UserDTO getUserDTO() {
-        return userDTO;
+        return user;
     }
 
     public void setUserDTO(UserDTO userDTO) {
-        this.userDTO = userDTO;
+        this.user = userDTO;
     }
 
     public int getScore() {

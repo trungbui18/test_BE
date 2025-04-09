@@ -15,21 +15,20 @@ public class TopicService {
     public List<Topic> getAllTopics() {
         return topicRepository.findAll();
     }
-    public Topic createTopic(String name) {
+    public void createTopic(String name) {
         if (topicRepository.findByName(name).isPresent()) {
             throw new IllegalArgumentException("Topic Đã Tồn Tại!");
         }
         Topic topic = new Topic();
         topic.setName(name);
-        return topicRepository.save(topic);
+        topicRepository.save(topic);
     }
     public void deleteTopic(int id) {
         topicRepository.deleteById(id);
     }
-    public Topic updateTopic(int id, String name) {
+    public void updateTopic(int id, String name) {
         Topic topic = topicRepository.findById(id).orElseThrow(() -> new RuntimeException("Không Tìm Thấy Topic!"));
         topic.setName(name);
         topicRepository.save(topic);
-        return topic;
     }
 }

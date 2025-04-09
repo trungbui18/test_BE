@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/topic")
 @Tag(name = "Topic Controller", description = "Operations pertaining to topic")
@@ -37,8 +36,8 @@ public class TopicController {
     @PostMapping
     public ResponseEntity<?> createTopic(@RequestParam String name) {
         try {
-            Topic topic = topicService.createTopic(name);
-            return ResponseEntity.ok(topic);
+            topicService.createTopic(name);
+            return ResponseEntity.ok("Thêm Topic Thành Công!");
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -47,8 +46,8 @@ public class TopicController {
     @PutMapping("/{idTopic}")
     public ResponseEntity<?> updateTopic(@PathVariable int idTopic, @RequestParam String name) {
         try {
-            Topic topic = topicService.updateTopic(idTopic, name);
-            return ResponseEntity.ok(topic);
+            topicService.updateTopic(idTopic, name);
+            return ResponseEntity.ok("Sửa Topic Thành Công!");
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

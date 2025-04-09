@@ -32,16 +32,9 @@ public class QuestionService {
         for (Question question : questions) {
             QuestionDTO questionDTO = new QuestionDTO();
             questionDTO.setId(question.getId());
-            questionDTO.setQuestion(question.getQuestion());
+            questionDTO.setContent(question.getQuestion());
             questionDTO.setImg(question.getImg());
-            List<AnswerDTO> answerDTOs = new ArrayList<>();
-            for (Answer answer : question.getAnswers()) {
-                AnswerDTO answerDTO = new AnswerDTO();
-                answerDTO.setId(answer.getId());
-                answerDTO.setContent(answer.getContent());
-                answerDTOs.add(answerDTO);
-            }
-            questionDTO.setAnswers(answerDTOs);
+            questionDTO.setAnswers(question.getAnswers());
             questionDTOs.add(questionDTO);
         }
         return questionDTOs;
@@ -50,7 +43,7 @@ public class QuestionService {
         questionRepository.deleteById(idQuestion);
     }
     @Transactional
-    public QuestionUpsertDTO createQuestion(QuestionRequest questionRequest, MultipartFile image) {
+    public void createQuestion(QuestionRequest questionRequest, MultipartFile image) {
         Question question = new Question();
         question.setQuestion(questionRequest.getQuestion());
         if (image != null && !image.isEmpty()) {
@@ -76,16 +69,9 @@ public class QuestionService {
             throw new RuntimeException("Không thể có hơn 1 câu đúng!");
         }
         answerRepository.saveAll(answers);
-        QuestionUpsertDTO questionUpsertDTO = new QuestionUpsertDTO();
-        questionUpsertDTO.setId(question.getId());
-        questionUpsertDTO.setQuestion(question.getQuestion());
-        questionUpsertDTO.setImg(question.getImg());
-        questionUpsertDTO.setAnswers(answers);
-        return questionUpsertDTO;
     }
     @Transactional
-    public QuestionUpsertDTO updateQuestion(QuestionUpsertDTO questionUpsertDTO, int idQuestion, MultipartFile image) {
-        // 1. Validate ID
+    public void updateQuestion(QuestionUpsertDTO questionUpsertDTO, int idQuestion, MultipartFile image) {
         if (questionUpsertDTO.getId() != idQuestion) {
             throw new RuntimeException("ID câu hỏi không khớp");
         }
@@ -110,17 +96,8 @@ public class QuestionService {
             existingAnswer.setContent(updatedAnswer.getContent());
             existingAnswer.setCorrect(updatedAnswer.isCorrect());
             existingAnswer.setQuestion(savedQuestion);
-
             finalAnswers.add(existingAnswer);
         }
-
-        List<Answer> savedAnswers = answerRepository.saveAll(finalAnswers);
-
-        questionUpsertDTO.setId(savedQuestion.getId());
-        questionUpsertDTO.setQuestion(savedQuestion.getQuestion());
-        questionUpsertDTO.setImg(savedQuestion.getImg());
-        questionUpsertDTO.setAnswers(savedAnswers);
-
-        return questionUpsertDTO;
+        answerRepository.saveAll(finalAnswers);
     }
 }

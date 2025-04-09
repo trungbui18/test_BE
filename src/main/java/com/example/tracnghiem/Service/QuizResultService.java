@@ -78,7 +78,7 @@ public class QuizResultService {
 
         quizResultDTO.setScore(quizResult.getScore());
         quizResultDTO.setTotalQuestions(quizResult.getTotalQuestions());
-        quizResultDTO.setSubmitted_at(quizResult.getSubmitted_at());
+        quizResultDTO.setSubmittedAt(quizResult.getSubmitted_at());
 
 
         if (quizResult.getUserResults() != null) {
@@ -91,18 +91,9 @@ public class QuizResultService {
                 if (userResult.getQuestion() != null) {
                     QuestionDTO questionDTO = new QuestionDTO();
                     questionDTO.setId(userResult.getQuestion().getId());
-                    questionDTO.setQuestion(userResult.getQuestion().getQuestion());
+                    questionDTO.setContent(userResult.getQuestion().getQuestion());
                     questionDTO.setImg(userResult.getQuestion().getImg());
-
-
-                    List<AnswerDTO> answerDTOs = new ArrayList<>();
-                    for (Answer answer : userResult.getQuestion().getAnswers()) {
-                        AnswerDTO answerDTO = new AnswerDTO();
-                        answerDTO.setId(answer.getId());
-                        answerDTO.setContent(answer.getContent());
-                        answerDTOs.add(answerDTO);
-                    }
-                    questionDTO.setAnswers(answerDTOs);
+                    questionDTO.setAnswers(userResult.getQuestion().getAnswers());
                     userResultDTO.setQuestion(questionDTO);
                 }
 
@@ -114,7 +105,7 @@ public class QuizResultService {
                 userResultDTO.setCorrect(userResult.isIs_correct());
                 userResultDTOs.add(userResultDTO);
             }
-            quizResultDTO.setUserResultDTOList(userResultDTOs);
+            quizResultDTO.setUserResults(userResultDTOs);
         }
 
         return quizResultDTO;

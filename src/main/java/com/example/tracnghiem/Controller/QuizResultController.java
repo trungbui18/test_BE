@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/result")
 public class QuizResultController {
@@ -18,7 +17,7 @@ public class QuizResultController {
         this.quizResultService = quizResultService;
     }
     @GetMapping("/user/{idUser}")
-    public ResponseEntity<?> getQuizResultForUser(@PathVariable int idUser) {
+    public ResponseEntity<?> getQuizResultForUser(@PathVariable int idUser) {       
         try {
             List<QuizResultSimpleDTO> quizResultSimpleDTOs=quizResultService.getQuizResultsByIdUser(idUser);
             return ResponseEntity.ok(quizResultSimpleDTOs);
