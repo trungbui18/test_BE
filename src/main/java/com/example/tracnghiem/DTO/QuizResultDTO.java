@@ -1,6 +1,6 @@
 package com.example.tracnghiem.DTO;
 
-import com.example.tracnghiem.Model.UserResult;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 import java.util.List;
@@ -12,8 +12,8 @@ public class QuizResultDTO {
     private String quizTitle;
     private int score;
     private int totalQuestions;
-    private Date submitted_at;
-    private List<UserResultDTO> userResultDTOList;
+    private Date submittedAt;
+    private List<UserResultDTO> userResults;
 
     public QuizResultDTO() {
     }
@@ -66,19 +66,19 @@ public class QuizResultDTO {
         this.totalQuestions = totalQuestions;
     }
 
-    public Date getSubmitted_at() {
-        return submitted_at;
+    public Date getSubmittedAt() {
+        return submittedAt;
     }
 
-    public void setSubmitted_at(Date submitted_at) {
-        this.submitted_at = submitted_at;
+    public void setSubmittedAt(Date submittedAt) {
+        this.submittedAt = submittedAt;
     }
 
-    public List<UserResultDTO> getUserResultDTOList() {
-        return userResultDTOList;
+    public List<UserResultDTO> getUserResults() {
+        return userResults;
     }
 
-    public void setUserResultDTOList(List<UserResultDTO> userResultDTOList) {
-        this.userResultDTOList = userResultDTOList;
+    public void setUserResults(List<UserResultDTO> userResults) {
+        this.userResults = userResults;
     }
 }

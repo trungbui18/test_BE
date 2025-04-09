@@ -30,7 +30,7 @@ public class ImageService {
             String fileName = UUID.randomUUID().toString() + file.getOriginalFilename();
             Path filePath=UPLOAD_DIR.resolve(fileName);
             Files.copy(file.getInputStream(),filePath, StandardCopyOption.REPLACE_EXISTING);
-            return "/uploads/" + fileName;
+            return fileName;
         } catch (IOException e) {
             throw new RuntimeException("Lỗi khi lưu ảnh", e);
         }

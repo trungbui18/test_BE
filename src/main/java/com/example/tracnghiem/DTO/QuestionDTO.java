@@ -1,12 +1,14 @@
 package com.example.tracnghiem.DTO;
 
+import com.example.tracnghiem.Model.Answer;
+
 import java.util.List;
 
 public class QuestionDTO {
     private int id;
-    private String question;
+    private String content;
     private String img;
-    private List<AnswerDTO> answers;
+    private List<Answer> answers;
 
     public int getId() {
         return id;
@@ -16,12 +18,12 @@ public class QuestionDTO {
         this.id = id;
     }
 
-    public String getQuestion() {
-        return question;
+    public String getContent() {
+        return content;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getImg() {
@@ -32,11 +34,11 @@ public class QuestionDTO {
         this.img = img;
     }
 
-    public List<AnswerDTO> getAnswers() {
+    public List<Answer> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<AnswerDTO> answers) {
+    public void setAnswers(List<Answer> answers) {
         this.answers = answers;
     }
 }

@@ -5,6 +5,7 @@ import com.example.tracnghiem.Model.*;
 import com.example.tracnghiem.Repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -31,7 +32,7 @@ public class QuizService {
         this.answerRepository = answerRepository;
         this.quizResultRepository = quizResultRepository;
     }
-    public QuizDTO createQuiz(String title, String description, String topicName,int time, int idUser, MultipartFile image) {
+    public void createQuiz(String title, String description, String topicName,int time, int idUser, MultipartFile image) {
         User user=userRepository.findById(idUser).orElseThrow(()-> new RuntimeException("Không Tìm Thấy User"));
         Topic topic= topicRepository.findByName(topicName).orElseThrow(()->new RuntimeException("Không Tìm Thấy Topic"));
         Quiz quiz = new Quiz();
@@ -52,18 +53,6 @@ public class QuizService {
         quiz.setCreated(new Date());
         quiz.setTime(time);
         quizRepository.save(quiz);
-        QuizDTO quizDTO = new QuizDTO();
-        quizDTO.setId(quiz.getId());
-        quizDTO.setTitle(quiz.getTitle());
-        quizDTO.setDescription(quiz.getDescription());
-        quizDTO.setCode(code);
-        quizDTO.setCreated(quiz.getCreated());
-        quizDTO.setTime(quiz.getTime());
-        quizDTO.setTopic(quiz.getTopic());
-        quizDTO.setImage(quiz.getImage());
-        UserDTO userDTO = new UserDTO(user.getId(),user.getUsername(),user.getEmail());
-        quizDTO.setUser(userDTO);
-        return quizDTO;
     }
     public QuizDTO getQuizById(int id) {
         Quiz quiz=quizRepository.findById(id).orElseThrow(()->new RuntimeException("Không Tìm Thấy Bài Thi"));
@@ -106,51 +95,25 @@ public class QuizService {
         }
         return quizDTOList;
     }
-    public QuizQuestionDTO getQuizQuestion(int idQuiz){
-        Quiz quiz=quizRepository.findById(idQuiz).orElseThrow(()->new RuntimeException("Không Tìm Thấy Quiz"));
-        QuizQuestionDTO quizQuestionDTO=new QuizQuestionDTO();
-        quizQuestionDTO.setId(quiz.getId());
-        quizQuestionDTO.setTitle(quiz.getTitle());
-        quizQuestionDTO.setUser(new UserDTO(quiz.getUser().getId(),quiz.getUser().getUsername(),quiz.getUser().getEmail()));
-        quizQuestionDTO.setDescription(quiz.getDescription());
-        quizQuestionDTO.setCode(quiz.getCode());
-        quizQuestionDTO.setCreated(quiz.getCreated());
-        quizQuestionDTO.setTime(quiz.getTime());
-        quizQuestionDTO.setTopic(quiz.getTopic());
-        quizQuestionDTO.setImage(quiz.getImage());
-        quizQuestionDTO.setQuestion(quiz.getQuestions());
-        return quizQuestionDTO;
-    }
+
     public void deteleQuiz(int idQuiz) {
         quizRepository.deleteById(idQuiz);
     }
-    public QuizDTO updateQuiz(QuizRequest quizRequest, int idQuiz, int idUser, MultipartFile image) {
+    public void updateQuiz(String title, String description, String topicName, int time, int idQuiz, int idUser, MultipartFile image) {
         Quiz quiz=quizRepository.findById(idQuiz).orElseThrow(()->new RuntimeException("Không Tìm Thấy Quiz"));
         if(idUser!=quiz.getUser().getId()){
             throw new RuntimeException("Không Đúng Người Tạo Quiz");
         }
-        quiz.setTitle(quizRequest.getTitle());
-        quiz.setDescription(quizRequest.getDescription());
-        Topic topic=topicRepository.findByName(quizRequest.getTopicName()).orElseThrow(()->new RuntimeException("Không Tìm Thấy Topic!"));
+        quiz.setTitle(title);
+        quiz.setDescription(description);
+        Topic topic=topicRepository.findByName(topicName).orElseThrow(()->new RuntimeException("Không Tìm Thấy Topic!"));
         quiz.setTopic(topic);
         if (image != null && !image.isEmpty()) {
             String imagePath = imageService.uploadImage(image);
             quiz.setImage(imagePath);
         }
-        quiz.setTime(quizRequest.getTime());
+        quiz.setTime(time);
         quizRepository.save(quiz);
-        QuizDTO quizDTO = new QuizDTO();
-        quizDTO.setId(quiz.getId());
-        quizDTO.setTitle(quizRequest.getTitle());
-        quizDTO.setDescription(quizRequest.getDescription());
-        quizDTO.setCode(quiz.getCode());
-        quizDTO.setCreated(quiz.getCreated());
-        quizDTO.setTime(quiz.getTime());
-        quizDTO.setTopic(quiz.getTopic());
-        quizDTO.setImage(quiz.getImage());
-        UserDTO userDTO=new UserDTO(quiz.getUser().getId(),quiz.getUser().getUsername(),quiz.getUser().getEmail());
-        quizDTO.setUser(userDTO);
-        return quizDTO;
     }
     public List<QuizDTO> getQuizListUser(int idUser) {
         List<Quiz> quizList=quizRepository.findAllByUser_Id(idUser);

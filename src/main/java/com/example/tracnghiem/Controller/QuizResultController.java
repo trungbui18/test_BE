@@ -17,7 +17,7 @@ public class QuizResultController {
         this.quizResultService = quizResultService;
     }
     @GetMapping("/user/{idUser}")
-    public ResponseEntity<?> getQuizResultForUser(@PathVariable int idUser) {
+    public ResponseEntity<?> getQuizResultForUser(@PathVariable int idUser) {       
         try {
             List<QuizResultSimpleDTO> quizResultSimpleDTOs=quizResultService.getQuizResultsByIdUser(idUser);
             return ResponseEntity.ok(quizResultSimpleDTOs);
