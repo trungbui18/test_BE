@@ -28,11 +28,11 @@ public class QuizController {
                                         @RequestParam String description,
                                         @RequestParam String topicName ,
                                         @RequestParam int time,
-                                        @RequestParam MultipartFile image,
+                                        @RequestParam (required = false) MultipartFile image,
                                         @RequestParam int idUser ) {
         try {
-            quizService.createQuiz(title,description,topicName,time,idUser,image);
-            return ResponseEntity.ok("Thêm Quiz Thành Công!");
+            int id=quizService.createQuiz(title,description,topicName,time,idUser,image);
+            return ResponseEntity.ok(id);
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -87,7 +87,7 @@ public class QuizController {
             @RequestParam String topicName,
             @RequestParam int time,
             @RequestParam int idUser,
-            @RequestParam MultipartFile image) {
+            @RequestParam (required = false) MultipartFile image) {
         try {
             quizService.updateQuiz(title,description,topicName,time, idQuiz, idUser, image);
             return ResponseEntity.ok("Sửa Quiz Thành Công!");

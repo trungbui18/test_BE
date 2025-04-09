@@ -32,7 +32,7 @@ public class QuizService {
         this.answerRepository = answerRepository;
         this.quizResultRepository = quizResultRepository;
     }
-    public void createQuiz(String title, String description, String topicName,int time, int idUser, MultipartFile image) {
+    public int createQuiz(String title, String description, String topicName,int time, int idUser, MultipartFile image) {
         User user=userRepository.findById(idUser).orElseThrow(()-> new RuntimeException("Không Tìm Thấy User"));
         Topic topic= topicRepository.findByName(topicName).orElseThrow(()->new RuntimeException("Không Tìm Thấy Topic"));
         Quiz quiz = new Quiz();
@@ -53,6 +53,7 @@ public class QuizService {
         quiz.setCreated(new Date());
         quiz.setTime(time);
         quizRepository.save(quiz);
+        return quiz.getId();
     }
     public QuizDTO getQuizById(int id) {
         Quiz quiz=quizRepository.findById(id).orElseThrow(()->new RuntimeException("Không Tìm Thấy Bài Thi"));

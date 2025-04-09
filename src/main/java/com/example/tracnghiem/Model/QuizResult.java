@@ -21,7 +21,7 @@ public class QuizResult {
     @Column(name = "total_question")
     private int totalQuestions;
     private Date submitted_at;
-    @OneToMany(mappedBy = "quizResult")
+    @OneToMany(mappedBy = "quizResult",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UserResult> userResults;
 
     public QuizResult() {

@@ -25,7 +25,7 @@ public class Quiz {
     private int time;
     @Column(name = "code", unique = true, length = 6)
     private String code;
-    @OneToMany(mappedBy = "quiz")
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Question> questions;
     public Quiz() {
     }
