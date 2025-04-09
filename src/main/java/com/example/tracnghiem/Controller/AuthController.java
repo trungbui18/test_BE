@@ -7,7 +7,6 @@ import com.example.tracnghiem.Model.User;
 import com.example.tracnghiem.Service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
