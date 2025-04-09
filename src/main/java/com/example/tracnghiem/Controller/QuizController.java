@@ -2,6 +2,7 @@ package com.example.tracnghiem.Controller;
 
 import com.example.tracnghiem.DTO.*;
 import com.example.tracnghiem.Model.Quiz;
+import com.example.tracnghiem.Model.QuizResult;
 import com.example.tracnghiem.Service.QuizService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -13,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/quiz")
 public class QuizController {
@@ -24,15 +24,15 @@ public class QuizController {
     }
     @PostMapping(value ="/create" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createQuiz(@RequestPart String title,
-                                        @RequestPart String description,
-                                        @RequestPart String topicName ,
-                                        @RequestPart int time,
-                                        @RequestPart MultipartFile image,
+    public ResponseEntity<?> createQuiz(@RequestParam String title,
+                                        @RequestParam String description,
+                                        @RequestParam String topicName ,
+                                        @RequestParam int time,
+                                        @RequestParam (required = false) MultipartFile image,
                                         @RequestParam int idUser ) {
         try {
-            QuizDTO quizDTO=quizService.createQuiz(title,description,topicName,time,idUser,image);
-            return ResponseEntity.ok(quizDTO);
+            int id=quizService.createQuiz(title,description,topicName,time,idUser,image);
+            return ResponseEntity.ok(id);
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -82,18 +82,17 @@ public class QuizController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateQuiz(
             @PathVariable int idQuiz,
-            @RequestPart String quizRequest,
+            @RequestParam String title,
+            @RequestParam String description,
+            @RequestParam String topicName,
+            @RequestParam int time,
             @RequestParam int idUser,
-            @RequestPart MultipartFile image) {
+            @RequestParam (required = false) MultipartFile image) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            QuizRequest quizRequest1 = mapper.readValue(quizRequest, QuizRequest.class);
-            QuizDTO quizDTO = quizService.updateQuiz(quizRequest1, idQuiz, idUser, image);
-            return ResponseEntity.ok(quizDTO);
+            quizService.updateQuiz(title,description,topicName,time, idQuiz, idUser, image);
+            return ResponseEntity.ok("Sửa Quiz Thành Công!");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (JsonProcessingException e) {
-            return ResponseEntity.badRequest().body("Lỗi parse QuizRequest: " + e.getMessage());
         }
     }
     @PostMapping("submit")
@@ -101,16 +100,6 @@ public class QuizController {
         try {
             SubmitRespone submitRespone=quizService.submitQuiz(submitRequest);
             return ResponseEntity.ok(submitRespone);
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-    @GetMapping("create-quiz/{idQuiz}")
-    public ResponseEntity<?> getQuizWithQuestions(@PathVariable int idQuiz) {
-        try {
-            QuizQuestionDTO quizQuestionDTO=quizService.getQuizQuestion(idQuiz);
-            return ResponseEntity.ok(quizQuestionDTO);
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
