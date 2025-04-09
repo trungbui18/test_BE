@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Cho phép tất cả đường dẫn
-                        .allowedOrigins("http://localhost:3000") // Cho phép React truy cập
+                        .allowedOrigins("https://nhom4-fe.vercel.app/") // Cho phép React truy cập
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Các method được phép
                         .allowedHeaders("*")
                         .allowCredentials(true);
