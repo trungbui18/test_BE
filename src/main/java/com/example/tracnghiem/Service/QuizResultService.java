@@ -80,8 +80,6 @@ public class QuizResultService {
         quizResultDTO.setTotalQuestions(quizResult.getTotalQuestions());
         quizResultDTO.setSubmittedAt(quizResult.getSubmitted_at());
 
-
-        if (quizResult.getUserResults() != null) {
             List<UserResultDTO> userResultDTOs = new ArrayList<>();
             for (UserResult userResult : quizResult.getUserResults()) {
                 UserResultDTO userResultDTO = new UserResultDTO();
@@ -104,7 +102,7 @@ public class QuizResultService {
 
                 userResultDTO.setCorrect(userResult.isIs_correct());
                 userResultDTOs.add(userResultDTO);
-            }
+
             quizResultDTO.setUserResults(userResultDTOs);
         }
 
