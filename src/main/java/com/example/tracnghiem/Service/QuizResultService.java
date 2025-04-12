@@ -80,31 +80,29 @@ public class QuizResultService {
         quizResultDTO.setTotalQuestions(quizResult.getTotalQuestions());
         quizResultDTO.setSubmittedAt(quizResult.getSubmitted_at());
 
-
-        if (quizResult.getUserResults() != null) {
-            List<UserResultDTO> userResultDTOs = new ArrayList<>();
-            for (UserResult userResult : quizResult.getUserResults()) {
-                UserResultDTO userResultDTO = new UserResultDTO();
-                userResultDTO.setId(userResult.getId());
+        List<UserResultDTO> userResultDTOs = new ArrayList<>();
+        for (UserResult userResult : quizResult.getUserResults()) {
+            UserResultDTO userResultDTO = new UserResultDTO();
+            userResultDTO.setId(userResult.getId());
 
 
-                if (userResult.getQuestion() != null) {
-                    QuestionDTO questionDTO = new QuestionDTO();
-                    questionDTO.setId(userResult.getQuestion().getId());
-                    questionDTO.setContent(userResult.getQuestion().getQuestion());
-                    questionDTO.setImg(userResult.getQuestion().getImg());
-                    questionDTO.setAnswers(userResult.getQuestion().getAnswers());
-                    userResultDTO.setQuestion(questionDTO);
-                }
-
-                if (userResult.getSelectedAnswer() != null) {
-                    userResultDTO.setSelectedAnswerId(userResult.getSelectedAnswer().getId());
-                    userResultDTO.setSelectedAnswerText(userResult.getSelectedAnswer().getContent());
-                }
-
-                userResultDTO.setCorrect(userResult.isIs_correct());
-                userResultDTOs.add(userResultDTO);
+            if (userResult.getQuestion() != null) {
+                QuestionDTO questionDTO = new QuestionDTO();
+                questionDTO.setId(userResult.getQuestion().getId());
+                questionDTO.setContent(userResult.getQuestion().getQuestion());
+                questionDTO.setImg(userResult.getQuestion().getImg());
+                questionDTO.setAnswers(userResult.getQuestion().getAnswers());
+                userResultDTO.setQuestion(questionDTO);
             }
+
+            if (userResult.getSelectedAnswer() != null) {
+                userResultDTO.setSelectedAnswerId(userResult.getSelectedAnswer().getId());
+                userResultDTO.setSelectedAnswerText(userResult.getSelectedAnswer().getContent());
+            }
+
+            userResultDTO.setCorrect(userResult.isIs_correct());
+            userResultDTOs.add(userResultDTO);
+
             quizResultDTO.setUserResults(userResultDTOs);
         }
 

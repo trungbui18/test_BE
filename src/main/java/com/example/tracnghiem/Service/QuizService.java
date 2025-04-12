@@ -22,20 +22,9 @@ public class QuizService {
     private final AnswerRepository answerRepository;
     private final QuizResultRepository quizResultRepository;
 
-    public QuizService(QuizRepository quizRepository, UserRepository userRepository, TopicRepository topicRepository, ImageService imageService, UserResultRepository userResultRepository, QuestionRepository questionRepository, AnswerRepository answerRepository, QuizResultRepository quizResultRepository) {
-        this.quizRepository = quizRepository;
-        this.userRepository = userRepository;
-        this.topicRepository = topicRepository;
-        this.imageService = imageService;
-        this.userResultRepository = userResultRepository;
-        this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
-        this.quizResultRepository = quizResultRepository;
-    }
-
     public List<QuizDTO> getAllQuizzes(){
         List<Quiz> quizzes = quizRepository.findAll();
-        List<QuizDTO> listQuizzDTO = new ArrayList<>();
+        List<QuizDTO> quizzesDTO = new ArrayList<>();
         for (Quiz quiz : quizzes) {
             QuizDTO quizDTO=new QuizDTO();
             quizDTO.setId(quiz.getId());
@@ -50,11 +39,21 @@ public class QuizService {
             quizDTO.setUser(userDTO);
             int totalQuestion= quiz.getQuestions().size();
             quizDTO.setTotalQuestions(totalQuestion);
-            listQuizzDTO.add(quizDTO);
+            quizzesDTO.add(quizDTO);
         }
-        return listQuizzDTO;
+        return quizzesDTO;
     }
 
+    public QuizService(QuizRepository quizRepository, UserRepository userRepository, TopicRepository topicRepository, ImageService imageService, UserResultRepository userResultRepository, QuestionRepository questionRepository, AnswerRepository answerRepository, QuizResultRepository quizResultRepository) {
+        this.quizRepository = quizRepository;
+        this.userRepository = userRepository;
+        this.topicRepository = topicRepository;
+        this.imageService = imageService;
+        this.userResultRepository = userResultRepository;
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
+        this.quizResultRepository = quizResultRepository;
+    }
     public int createQuiz(String title, String description, String topicName,int time, int idUser, MultipartFile image) {
         User user=userRepository.findById(idUser).orElseThrow(()-> new RuntimeException("Không Tìm Thấy User"));
         Topic topic= topicRepository.findByName(topicName).orElseThrow(()->new RuntimeException("Không Tìm Thấy Topic"));

@@ -74,7 +74,7 @@ public class QuizController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @DeleteMapping("/idQuiz")
+    @DeleteMapping("delete/{idQuiz}")
     public ResponseEntity<?> deleteQuiz(@PathVariable int idQuiz) {
         try {
             quizService.deteleQuiz(idQuiz);
@@ -84,7 +84,7 @@ public class QuizController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @PutMapping(value="/{idQuiz}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
+    @PutMapping(value="update/{idQuiz}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateQuiz(
             @PathVariable int idQuiz,
