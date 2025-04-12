@@ -27,7 +27,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @DeleteMapping("/{idQuestion}")
+    @DeleteMapping("delete/{idQuestion}")
     public ResponseEntity<?> deleteQuestionById(@PathVariable int idQuestion) {
         try {
             questionService.DeleteQuestion(idQuestion);
@@ -37,7 +37,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
+    @PostMapping(value = "create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addQuestion(
             @ModelAttribute QuestionRequest questionRequest,
@@ -50,7 +50,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
+    @PutMapping(value = "update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateQuestion(@ModelAttribute QuestionUpsertDTO questionUpsertDTO, @RequestParam int idQuestion, @RequestParam(required = false) MultipartFile imgage) {
         try {
