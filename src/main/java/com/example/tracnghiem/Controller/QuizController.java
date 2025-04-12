@@ -22,6 +22,12 @@ public class QuizController {
     public QuizController(QuizService quizService) {
         this.quizService = quizService;
     }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<QuizDTO>> getAllQuiz() {
+        return ResponseEntity.ok(quizService.getAllQuizzes());
+
+    }
     @PostMapping(value ="/create" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createQuiz(@RequestParam String title,

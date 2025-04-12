@@ -1,6 +1,7 @@
 package com.example.tracnghiem.Controller;
 
 import com.example.tracnghiem.DTO.LoginDTO;
+import com.example.tracnghiem.DTO.LoginResponse;
 import com.example.tracnghiem.DTO.RegisterDTO;
 import com.example.tracnghiem.DTO.UserDTO;
 import com.example.tracnghiem.Model.User;
@@ -25,8 +26,8 @@ public class AuthController {
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         try {
-            UserDTO userDTO=userService.login(loginDTO.getEmail(),loginDTO.getPassword());
-            return ResponseEntity.ok(userDTO);
+            LoginResponse loginResponse=userService.login(loginDTO.getEmail(),loginDTO.getPassword());
+            return ResponseEntity.ok(loginResponse);
         }
         catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());

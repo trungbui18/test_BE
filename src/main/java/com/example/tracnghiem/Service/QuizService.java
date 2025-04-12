@@ -32,6 +32,29 @@ public class QuizService {
         this.answerRepository = answerRepository;
         this.quizResultRepository = quizResultRepository;
     }
+
+    public List<QuizDTO> getAllQuizzes(){
+        List<Quiz> quizzes = quizRepository.findAll();
+        List<QuizDTO> listQuizzDTO = new ArrayList<>();
+        for (Quiz quiz : quizzes) {
+            QuizDTO quizDTO=new QuizDTO();
+            quizDTO.setId(quiz.getId());
+            quizDTO.setTitle(quiz.getTitle());
+            quizDTO.setDescription(quiz.getDescription());
+            quizDTO.setCode(quiz.getCode());
+            quizDTO.setCreated(quiz.getCreated());
+            quizDTO.setTime(quiz.getTime());
+            quizDTO.setTopic(quiz.getTopic());
+            quizDTO.setImage(quiz.getImage());
+            UserDTO userDTO= new UserDTO(quiz.getUser().getId(),quiz.getUser().getUsername(),quiz.getUser().getEmail());
+            quizDTO.setUser(userDTO);
+            int totalQuestion= quiz.getQuestions().size();
+            quizDTO.setTotalQuestions(totalQuestion);
+            listQuizzDTO.add(quizDTO);
+        }
+        return listQuizzDTO;
+    }
+
     public int createQuiz(String title, String description, String topicName,int time, int idUser, MultipartFile image) {
         User user=userRepository.findById(idUser).orElseThrow(()-> new RuntimeException("Không Tìm Thấy User"));
         Topic topic= topicRepository.findByName(topicName).orElseThrow(()->new RuntimeException("Không Tìm Thấy Topic"));

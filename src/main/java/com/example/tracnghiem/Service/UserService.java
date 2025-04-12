@@ -1,10 +1,7 @@
 package com.example.tracnghiem.Service;
 
 import com.example.tracnghiem.Config.PasswordEncoder;
-import com.example.tracnghiem.DTO.ChangePasswordDTO;
-import com.example.tracnghiem.DTO.ChangeProfileDTO;
-import com.example.tracnghiem.DTO.RegisterDTO;
-import com.example.tracnghiem.DTO.UserDTO;
+import com.example.tracnghiem.DTO.*;
 import com.example.tracnghiem.Model.Role;
 import com.example.tracnghiem.Model.User;
 import com.example.tracnghiem.Repository.UserRepository;
@@ -44,17 +41,13 @@ public class UserService {
         userRepository.save(user);
         return "Đăng Ký Thành Công!";
     }
-    public UserDTO login(String email, String password) {
+    public LoginResponse login(String email, String password) {
         User user= userRepository.findByEmail(email).orElseThrow(()->new RuntimeException("Không Đúng Tài Khoản Mật Khẩu"));
         String encodedPassword = PasswordEncoder.encodeMD5(password);
         if (!encodedPassword.equals(user.getPassword())){
             throw new RuntimeException("Không Đúng Tài Khoản Mật Khẩu!");
         }
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setEmail(user.getEmail());
-        return userDTO;
+        return new LoginResponse(user.getId(),user.getUsername(),user.getEmail(),user.getRole());
     }
     public void changePassword(ChangePasswordDTO changePasswordDTO) {
         User user=userRepository.findById(changePasswordDTO.getIdUser()).orElseThrow(()->new RuntimeException("Không đúng User"));
