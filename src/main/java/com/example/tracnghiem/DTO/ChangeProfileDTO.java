@@ -1,19 +1,10 @@
 package com.example.tracnghiem.DTO;
 
 public class ChangeProfileDTO {
-    private int idUser;
     private String email;
     private String username;
 
     public ChangeProfileDTO() {
-    }
-
-    public int getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
     }
 
     public String getEmail() {

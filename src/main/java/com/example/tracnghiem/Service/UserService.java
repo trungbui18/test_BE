@@ -53,7 +53,7 @@ public class UserService {
         userDTO.setEmail(user.getEmail());
         return new LoginResponse(user.getId(),user.getUsername(),user.getEmail(),user.getRole());
     }
-    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+    public boolean changePassword(ChangePasswordDTO changePasswordDTO) {
         User user=userRepository.findById(changePasswordDTO.getIdUser()).orElseThrow(()->new RuntimeException("Không đúng User"));
         String encodedOldPassword = PasswordEncoder.encodeMD5(changePasswordDTO.getOldPassword());
         if (!encodedOldPassword.equals(user.getPassword())){
@@ -69,10 +69,16 @@ public class UserService {
             throw new RuntimeException("Mật khẩu và nhập lại mật khẩu không trùng khớp!");
         }
         user.setPassword(PasswordEncoder.encodeMD5(changePasswordDTO.getNewPassword()));
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Lưu mật khẩu thất bại: " + e.getMessage());
+        }
+
     }
-    public void changeInformationUser(ChangeProfileDTO changeProfileDTO){
-        User user=userRepository.findById(changeProfileDTO.getIdUser()).orElseThrow(()->new RuntimeException("Không Tìm Thấy User!"));
+    public void changeInformationUser(ChangeProfileDTO changeProfileDTO,int idUser){
+        User user=userRepository.findById(idUser).orElseThrow(()->new RuntimeException("Không Tìm Thấy User!"));
         if (!changeProfileDTO.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")){
             throw new RuntimeException("Email không hợp lệ!");
         }
