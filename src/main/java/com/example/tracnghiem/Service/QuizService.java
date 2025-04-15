@@ -47,7 +47,7 @@ public class QuizService {
         String code;
         Random random = new Random();
         do {
-            code = String.format("%06d", random.nextInt(1000000)); // Sinh code 6 chữ số
+            code = String.format("%06d", random.nextInt(1000000));
         } while (quizRepository.existsByCode(code));
         quiz.setCode(code);
         quiz.setCreated(new Date());
