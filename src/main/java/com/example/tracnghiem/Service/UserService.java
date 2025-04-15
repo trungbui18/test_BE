@@ -47,10 +47,7 @@ public class UserService {
         if (!encodedPassword.equals(user.getPassword())){
             throw new RuntimeException("Không Đúng Tài Khoản Mật Khẩu!");
         }
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setEmail(user.getEmail());
+
         return new LoginResponse(user.getId(),user.getUsername(),user.getEmail(),user.getRole());
     }
     public boolean changePassword(ChangePasswordDTO changePasswordDTO) {

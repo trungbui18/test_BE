@@ -98,4 +98,14 @@ public class QuestionService {
         }
         answerRepository.saveAll(finalAnswers);
     }
+
+    public QuestionDTO getQuestionById(int idQuestion) {
+        Question question = questionRepository.findById(idQuestion).orElseThrow(()->new RuntimeException("deo thay"));
+        QuestionDTO questionDTO = new QuestionDTO();
+        questionDTO.setId(question.getId());
+        questionDTO.setContent(question.getQuestion());
+        questionDTO.setImg(question.getImg());
+        questionDTO.setAnswers(question.getAnswers());
+        return questionDTO;
+    }
 }

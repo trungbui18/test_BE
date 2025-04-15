@@ -61,4 +61,14 @@ public class QuestionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/{idQuestion}")
+    public ResponseEntity<?> getQuestion(@PathVariable int idQuestion) {
+        try {
+            QuestionDTO questionDTO = questionService.getQuestionById(idQuestion);
+            return ResponseEntity.ok(questionDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Deo thay");
+        }
+    }
 }
