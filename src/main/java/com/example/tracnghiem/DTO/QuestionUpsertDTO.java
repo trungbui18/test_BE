@@ -5,33 +5,16 @@ import com.example.tracnghiem.Model.Answer;
 import java.util.List;
 
 public class QuestionUpsertDTO {
-    private int id;
-    private String question;
-    private String img;
+    private String content;
     private List<Answer> answers;
 
-    public int getId() {
-        return id;
+
+    public String getContent() {
+        return content;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getImg() {
-        return img;
-    }
-
-    public void setImg(String img) {
-        this.img = img;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public List<Answer> getAnswers() {

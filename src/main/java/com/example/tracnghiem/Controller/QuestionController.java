@@ -50,11 +50,11 @@ public class QuestionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @PutMapping(value = "update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
+    @PutMapping(value = "update/{idQuestion}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateQuestion(@ModelAttribute QuestionUpsertDTO questionUpsertDTO, @RequestParam int idQuestion, @RequestParam(required = false) MultipartFile imgage) {
+    public ResponseEntity<?> updateQuestion(@ModelAttribute QuestionUpsertDTO questionUpsertDTO, @PathVariable int idQuestion, @RequestParam(required = false) MultipartFile image) {
         try {
-            questionService.updateQuestion(questionUpsertDTO, idQuestion, imgage);
+            questionService.updateQuestion(questionUpsertDTO, idQuestion, image);
             return ResponseEntity.ok("Sửa Câu Hỏi Thành Công!");
         }
         catch (RuntimeException e) {

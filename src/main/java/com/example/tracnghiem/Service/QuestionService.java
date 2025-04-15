@@ -72,13 +72,9 @@ public class QuestionService {
     }
     @Transactional
     public void updateQuestion(QuestionUpsertDTO questionUpsertDTO, int idQuestion, MultipartFile image) {
-        if (questionUpsertDTO.getId() != idQuestion) {
-            throw new RuntimeException("ID câu hỏi không khớp");
-        }
-
         Question question = questionRepository.findById(idQuestion)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy câu hỏi"));
-        question.setQuestion(questionUpsertDTO.getQuestion());
+        question.setQuestion(questionUpsertDTO.getContent());
 
         if (image != null && !image.isEmpty()) {
             question.setImg(imageService.uploadImage(image));
@@ -92,7 +88,9 @@ public class QuestionService {
         for (Answer updatedAnswer : updatedAnswers) {
             Answer existingAnswer = answerRepository.findById(updatedAnswer.getId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy Answer ID: " + updatedAnswer.getId()));
-
+            if (existingAnswer.getQuestion().getId()!=idQuestion){
+                throw new RuntimeException("Id câu trả lời không thuộc câu hỏi!");
+            }
             existingAnswer.setContent(updatedAnswer.getContent());
             existingAnswer.setCorrect(updatedAnswer.isCorrect());
             existingAnswer.setQuestion(savedQuestion);
