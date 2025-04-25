@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface QuizResultRepository extends JpaRepository<QuizResult, Integer> {
     List<QuizResult> findAllByUserId(int userId);
-    List<QuizResult> findAllByQuizId(int quizId);
+    List<QuizResult> findAllByQuiz_Id(int quizId);
 }

@@ -17,7 +17,7 @@ public class QuizResultService {
         this.quizResultRepository = quizResultRepository;
     }
     public List<UserQuizResultDTO> getQuizResultsByIdQuiz(int idQuiz) {
-        List<QuizResult> quizResults = quizResultRepository.findAllByQuizId(idQuiz);
+        List<QuizResult> quizResults = quizResultRepository.findAllByQuiz_Id(idQuiz);
         List<UserQuizResultDTO> userQuizResultDTOs=new ArrayList<>();
         for(QuizResult quizResult:quizResults){
             UserQuizResultDTO userQuizResultDTO=new UserQuizResultDTO();

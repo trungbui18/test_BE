@@ -2,6 +2,7 @@ package com.example.tracnghiem.Controller;
 
 import com.example.tracnghiem.DTO.ChangePasswordDTO;
 import com.example.tracnghiem.DTO.ChangeProfileDTO;
+import com.example.tracnghiem.DTO.UserDTO;
 import com.example.tracnghiem.Service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,8 @@ public class UserController {
     @PutMapping("information/{idUser}")
     public ResponseEntity<?> UpdateInformationUser(@RequestBody ChangeProfileDTO changeProfileDTO, @PathVariable int idUser) {
         try{
-            userService.changeInformationUser(changeProfileDTO,idUser);
-            return ResponseEntity.ok().body("Thay Đổi Thông Tin Thành Công!");
+            UserDTO userDTO=userService.changeInformationUser(changeProfileDTO,idUser);
+            return ResponseEntity.ok().body(userDTO);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

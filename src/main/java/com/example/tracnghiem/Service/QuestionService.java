@@ -26,8 +26,12 @@ public class QuestionService {
         this.quizRepository = quizRepository;
         this.imageService = imageService;
     }
-    public List<QuestionDTO> getAllQuestions(int idQuiz) {
-        List<Question> questions = questionRepository.findAllByQuiz_Id(idQuiz);
+    public QuizExam getAllQuestions(int idQuiz) {
+        Quiz quiz = quizRepository.findById(idQuiz).orElseThrow(()->new RuntimeException("Not Found Quiz"));
+        QuizExam quizExam = new QuizExam();
+        quizExam.setIdQuiz(idQuiz);
+        quizExam.setTime(quiz.getTime());
+        List<Question> questions = questionRepository.findAllByQuiz_Id(quiz.getId());
         List<QuestionDTO> questionDTOs = new ArrayList<>();
         for (Question question : questions) {
             QuestionDTO questionDTO = new QuestionDTO();
@@ -37,7 +41,8 @@ public class QuestionService {
             questionDTO.setAnswers(question.getAnswers());
             questionDTOs.add(questionDTO);
         }
-        return questionDTOs;
+        quizExam.setQuestions(questionDTOs);
+        return quizExam;
     }
     public void DeleteQuestion(int idQuestion) {
         questionRepository.deleteById(idQuestion);

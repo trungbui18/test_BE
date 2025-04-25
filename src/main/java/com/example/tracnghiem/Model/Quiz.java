@@ -27,6 +27,8 @@ public class Quiz {
     private String code;
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Question> questions;
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<QuizResult> quizResults;
     public Quiz() {
     }
 
@@ -108,5 +110,13 @@ public class Quiz {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public List<QuizResult> getQuizResults() {
+        return quizResults;
+    }
+
+    public void setQuizResults(List<QuizResult> quizResults) {
+        this.quizResults = quizResults;
     }
 }

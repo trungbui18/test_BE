@@ -74,16 +74,23 @@ public class UserService {
         }
 
     }
-    public void changeInformationUser(ChangeProfileDTO changeProfileDTO,int idUser){
+    public UserDTO changeInformationUser(ChangeProfileDTO changeProfileDTO,int idUser){
         User user=userRepository.findById(idUser).orElseThrow(()->new RuntimeException("Không Tìm Thấy User!"));
         if (!changeProfileDTO.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")){
             throw new RuntimeException("Email không hợp lệ!");
         }
-        if (userRepository.findByEmail(changeProfileDTO.getEmail()).isPresent()){
-            throw new RuntimeException("Email đã được đăng ký!");
+        if(!changeProfileDTO.getEmail().equals(user.getEmail())) {
+            if (userRepository.findByEmail(changeProfileDTO.getEmail()).isPresent()) {
+                throw new RuntimeException("Email đã được đăng ký!");
+            }
         }
         user.setUsername(changeProfileDTO.getUsername());
         user.setEmail(changeProfileDTO.getEmail());
         userRepository.save(user);
+        UserDTO userDTO=new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(changeProfileDTO.getUsername());
+        userDTO.setEmail(changeProfileDTO.getEmail());
+        return userDTO;
     }
 }

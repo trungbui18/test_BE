@@ -3,6 +3,7 @@ package com.example.tracnghiem.Controller;
 import com.example.tracnghiem.DTO.QuestionUpsertDTO;
 import com.example.tracnghiem.DTO.QuestionDTO;
 import com.example.tracnghiem.DTO.QuestionRequest;
+import com.example.tracnghiem.DTO.QuizExam;
 import com.example.tracnghiem.Service.QuestionService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class QuestionController {
     @GetMapping("/id-quiz/{idQuiz}")
     public ResponseEntity<?> getQuestionById(@PathVariable int idQuiz) {
         try {
-            List<QuestionDTO> questionDTOS=questionService.getAllQuestions(idQuiz);
-            return ResponseEntity.ok(questionDTOS);
+            QuizExam quizExam=questionService.getAllQuestions(idQuiz);
+            return ResponseEntity.ok(quizExam);
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
